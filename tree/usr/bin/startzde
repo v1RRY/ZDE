@@ -1,0 +1,2 @@
+#!/bin/bash
+labwc -S "/usr/bin/zdeinit"

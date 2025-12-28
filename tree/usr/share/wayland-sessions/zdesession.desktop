@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=ZDE
+Comment=Wayland remix of ZDE
+Exec=startzde
+Type=Application

@@ -1,0 +1,48 @@
+#!/usr/bin/python3
+import sys
+from PyQt6.QtCore import QSize, Qt
+from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QWidget, QVBoxLayout, QLabel, QHBoxLayout
+
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        self.setWindowTitle("Welcome to ZDE!")
+        self.resize(300, 230)
+
+        welcomelabel = QLabel("Welcome to ZDE!")
+        welcomelabel.setStyleSheet("font-size: 24px;")
+
+        welcometext = QLabel("ZDE is Wayland-based remix of deprecated EblanDE and wants to be better, more beautiful and faster than EblanDE. Good luck!<br><br>Star us on <a href=\"https://github.com/ZDesktopEnvironment/ZDE\">GitHub</a>.<br>Subscribe to our <a href=\"https://t.me/ZDesktopEnvironment\">Telegram</a>.")
+        welcometext.setWordWrap(True)
+        welcometext.setTextFormat(Qt.TextFormat.RichText)
+        welcometext.setOpenExternalLinks(True)
+
+        btnok = QPushButton("OK")
+        btnok.clicked.connect(self.okbtn_react)
+        
+        btnslayout = QHBoxLayout()
+        btnslayout.addWidget(btnok)
+        
+        btnscontainer = QWidget()
+        btnscontainer.setLayout(btnslayout)
+        
+        layout = QVBoxLayout()
+        layout.addWidget(welcomelabel)
+        layout.addWidget(welcometext)
+        layout.addWidget(btnscontainer)
+        
+        container = QWidget()
+        container.setLayout(layout)
+        
+        self.setCentralWidget(container)
+    def okbtn_react(self):
+        self.close()
+
+
+app = QApplication(sys.argv)
+
+window = MainWindow()
+window.show()
+
+app.exec()

@@ -10,6 +10,8 @@ import psutil
 
 processes = []
 
+showwelcome = False
+
 if len(sys.argv) == 2:
     config_file = open(os.path.expanduser(sys.argv[1]))
     config = json.loads(config_file.read())
@@ -20,7 +22,7 @@ else:
         config = json.loads(config_file.read())
         config_file.close()
     except FileNotFoundError:
-        messagebox.showwarning("ZDE", "No config file found. Creating new.")
+        showwelcome = True
         try:
             os.makedirs(os.path.dirname(os.path.expanduser("~/.config/zde/config.json")), exist_ok=True)
             shutil.copyfile("/etc/xdg/zde/config.json", os.path.expanduser("~/.config/zde/config.json"))
@@ -41,12 +43,16 @@ elif config["wallpaper_type"] == "image":
     p1 = subprocess.Popen("swaybg -i \"" + config["wallpaper"]["path"] + "\" -m " + config["wallpaper"]["mode"], shell=True)
     processes.append(p1)
 else:
-    messagebox.showerror("Your config file has an error. Incorrect wallpaper type (requestes color/image, got " + config["wallpaper_type"] + ")")
+    messagebox.showerror("Your config file has an error. Incorrect wallpaper type (requested color/image, got " + config["wallpaper_type"] + ")")
 
 p2 = subprocess.Popen("nwg-panel", shell=True)
 processes.append(p2)
 
 p3 = subprocess.Popen("mako", shell=True)
 processes.append(p3)
+
+if showwelcome:
+    p4 = subprocess.Popen("zwelcome")
+    processes.append(p4)
 
 psutil.wait_procs(processes)

@@ -3,7 +3,7 @@
   <menu id="root-menu" label="ZDE">
   	<item label="App Menu">
 		<action name="Execute">
-			<command>nwg-drawer</command>
+			<command>zmenu</command>
 		</action>
   	</item>
   	<item label="Exit">

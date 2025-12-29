@@ -15,7 +15,7 @@ git clone https://github.com/ZDesktopEnvironment/ZDE
 ...then, you should install all dependencies:
 
 ```shell
-pacman -S labwc python3 tk moka swaybg nwg-panel nwg-drawer python3-pyqt6
+pacman -S labwc python3 tk moka swaybg nwg-panel nwg-drawer nwg-menu python3-pyqt6 jq --needed
 ```
 
 ...and copy ZDE to your system:

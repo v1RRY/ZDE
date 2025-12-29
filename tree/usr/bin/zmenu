@@ -1,0 +1,2 @@
+#!/bin/bash
+nwg-$(jq '.interface_menu' ~/.config/zde/config.json -r)

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=ZConfig
+Comment=Configuration for ZDE
+Exec=/usr/bin/zconfig
+Icon=preferences-system
+Terminal=false
+Categories=System;Application;

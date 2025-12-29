@@ -1,0 +1,121 @@
+#!/usr/bin/python3
+import subprocess
+import sys
+import os
+import json
+from PyQt6.QtCore import QSize, Qt
+from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QWidget, QVBoxLayout, QLabel, QHBoxLayout, QTabWidget, QMessageBox, QFileDialog, QColorDialog, QComboBox
+
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        self.setWindowTitle("Configure ZDE")
+        self.resize(640, 480)
+
+        self.wallpaper_type_widget = QComboBox()
+        self.wallpaper_type_widget.addItems(["image | Select an image to show on your desktop", "color | Select a solid color to show on your desktop"])
+        if self.getconfig()["wallpaper_type"] == "image":
+            self.wallpaper_type_widget.setCurrentIndex(0)
+            self.wallpaper_image = self.getconfig()["wallpaper"]["path"]
+        else:
+            self.wallpaper_type_widget.setCurrentIndex(1)
+            self.wallpaper_color = self.getconfig()["wallpaper"]
+
+        self.wallpaper_image_select_widget = QPushButton("Set an image")
+        self.wallpaper_image_select_widget.clicked.connect(self.wallpaper_image_select)
+
+        self.wallpaper_color_select_widget = QPushButton("Set a color")
+        self.wallpaper_color_select_widget.clicked.connect(self.wallpaper_color_select)
+
+        self.wallpaper_tab_layout = QVBoxLayout()
+        self.wallpaper_tab_layout.addWidget(self.wallpaper_type_widget)
+        self.wallpaper_tab_layout.addWidget(self.wallpaper_image_select_widget)
+        self.wallpaper_tab_layout.addWidget(self.wallpaper_color_select_widget)
+        self.wallpaper_tab_layout.addStretch(1)
+
+        self.wallpaper_tab = QWidget()
+        self.wallpaper_tab.setLayout(self.wallpaper_tab_layout)
+
+        self.interface_menu_select_widget = QComboBox()
+        self.interface_menu_select_widget.addItems(["drawer | Fullscreen drawer. Useful for tablets", "menu | Small menu in corner of screen"])
+        print(self.getconfig()["interface_menu"])
+        if self.getconfig()["interface_menu"] == "drawer":
+            self.interface_menu_select_widget.setCurrentIndex(0)
+        else:
+            self.interface_menu_select_widget.setCurrentIndex(1)
+
+        self.interface_open_panel_config_widget = QPushButton("Configure panel")
+        self.interface_open_panel_config_widget.clicked.connect(self.open_panel_config)
+
+        self.interface_tab_layout = QVBoxLayout()
+        self.interface_tab_layout.addWidget(self.interface_menu_select_widget)
+        self.interface_tab_layout.addWidget(self.interface_open_panel_config_widget)
+        self.interface_tab_layout.addStretch(1)
+
+        self.interface_tab = QWidget()
+        self.interface_tab.setLayout(self.interface_tab_layout)
+
+        self.tab_container = QTabWidget()
+        self.tab_container.addTab(self.wallpaper_tab, "Wallpaper")
+        self.tab_container.addTab(self.interface_tab, "Interface")
+
+        self.apply_button = QPushButton("Apply")
+        self.apply_button.clicked.connect(self.applybtn_react)
+
+        self.container_layout = QVBoxLayout()
+        self.container_layout.addWidget(self.tab_container)
+        self.container_layout.addWidget(self.apply_button)
+
+        self.container = QWidget()
+        self.container.setLayout(self.container_layout)
+        
+        self.setCentralWidget(self.container)
+    def applybtn_react(self):
+        config_file = {}
+        if self.wallpaper_type_widget.currentIndex() == 0:
+            config_file["wallpaper_type"] = "image"
+            config_file["wallpaper"] = {"path": self.wallpaper_image, "mode": "stretch"} # щя лень уже добавлять режимы потом добавлю уже
+        else:
+            config_file["wallpaper_type"] = "color"
+            config_file["wallpaper"] = self.wallpaper_color.replace("#", "")
+
+        if self.interface_menu_select_widget.currentIndex() == 0:
+            config_file["interface_menu"] = "drawer"
+        else:
+            config_file["interface_menu"] = "menu"
+
+        print(config_file)
+        config = open(os.path.expanduser("~/.config/zde/config.json"), "w")
+        config.write(json.dumps(config_file))
+        config.close()
+        QMessageBox.information(self, "ZDE", "OK, but to fully apply changes, you need to restart ZDE")
+    def getconfig(self):
+        config_file = open(os.path.expanduser("~/.config/zde/config.json"))
+        config = json.loads(config_file.read())
+        config_file.close()
+        return config
+    def wallpaper_image_select(self):
+        file_path, _ = QFileDialog.getOpenFileName(
+            None, 
+            "Select Image", 
+            "", 
+            "Image Files (*.png *.jpg *.jpeg *.bmp, *.tiff, *.tga)"
+        )
+
+        if file_path:
+            self.wallpaper_image = file_path
+    def wallpaper_color_select(self):
+        color = QColorDialog.getColor()
+
+        if color.isValid():
+            self.wallpaper_color = color.name()
+    def open_panel_config(self):
+        subprocess.Popen("nwg-panel-config")
+
+app = QApplication(sys.argv)
+
+window = MainWindow()
+window.show()
+
+app.exec()

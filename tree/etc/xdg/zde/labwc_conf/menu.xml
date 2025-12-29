@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<labwc_menu>
+  <menu id="root-menu" label="ZDE">
+  	<item label="App Menu">
+		<action name="Execute">
+			<command>nwg-drawer</command>
+		</action>
+  	</item>
+  	<item label="Exit">
+		<action name="Exit" />
+  	</item>
+  </menu>
+</labwc_menu>

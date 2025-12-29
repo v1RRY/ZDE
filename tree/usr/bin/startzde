@@ -1,2 +1,2 @@
 #!/bin/bash
-labwc -S "/usr/bin/zdeinit"
+labwc -S "/usr/bin/zdeinit" -C "/etc/xdg/zde/labwc_conf"

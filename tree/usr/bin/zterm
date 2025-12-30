@@ -1,0 +1,2 @@
+#!/bin/bash
+$(jq '.session_terminal' ~/.config/zde/config.json -r)

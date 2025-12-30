@@ -1,5 +1,9 @@
 {
 	"wallpaper_type": "color",
 	"wallpaper": "3B6EA5",
-	"interface_menu": "drawer"
+	"interface_menu": "drawer",
+	"autostart": [
+		"echo AUTOSTART EXAMPLE"
+	],
+	"session_terminal": "alacritty"
 }

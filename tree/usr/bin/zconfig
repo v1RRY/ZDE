@@ -4,7 +4,7 @@ import sys
 import os
 import json
 from PyQt6.QtCore import QSize, Qt
-from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QWidget, QVBoxLayout, QLabel, QHBoxLayout, QTabWidget, QMessageBox, QFileDialog, QColorDialog, QComboBox
+from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QWidget, QVBoxLayout, QLabel, QHBoxLayout, QTabWidget, QMessageBox, QFileDialog, QColorDialog, QComboBox, QLineEdit, QListWidget
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -56,9 +56,51 @@ class MainWindow(QMainWindow):
         self.interface_tab = QWidget()
         self.interface_tab.setLayout(self.interface_tab_layout)
 
+        self.session_autostart_newentry_line = QLineEdit()
+        
+        self.session_autostart_newentry_add_btn = QPushButton("+")
+        self.session_autostart_newentry_add_btn.clicked.connect(self.session_autostart_add)
+
+        self.session_autostart_newentry_del_btn = QPushButton("-")
+        self.session_autostart_newentry_del_btn.clicked.connect(self.session_autostart_del)
+
+        self.session_autostart_newentry_widget_layout = QHBoxLayout()
+        self.session_autostart_newentry_widget_layout.addWidget(self.session_autostart_newentry_line)
+        self.session_autostart_newentry_widget_layout.addWidget(self.session_autostart_newentry_add_btn)
+        self.session_autostart_newentry_widget_layout.addWidget(self.session_autostart_newentry_del_btn)
+        
+        self.session_autostart_newentry_widget = QWidget()
+        self.session_autostart_newentry_widget.setLayout(self.session_autostart_newentry_widget_layout) 
+
+        self.session_autostart_list = QListWidget()
+        for i in self.getconfig()["autostart"]:
+            self.session_autostart_list.addItem(i)
+
+        self.session_terminal_app_label = QLabel("Terminal app:")
+
+        self.session_terminal_app_line = QLineEdit()
+        self.session_terminal_app_line.setText(self.getconfig()["session_terminal"])
+
+        self.session_terminal_widget_layout = QHBoxLayout()
+        self.session_terminal_widget_layout.addWidget(self.session_terminal_app_label)
+        self.session_terminal_widget_layout.addWidget(self.session_terminal_app_line)
+
+        self.session_terminal_widget = QWidget()
+        self.session_terminal_widget.setLayout(self.session_terminal_widget_layout)
+
+        self.session_tab_layout = QVBoxLayout()
+        self.session_tab_layout.addWidget(self.session_autostart_newentry_widget)
+        self.session_tab_layout.addWidget(self.session_autostart_list)
+        self.session_tab_layout.addWidget(self.session_terminal_widget)
+        self.session_tab_layout.addStretch(1)
+
+        self.session_tab = QWidget()
+        self.session_tab.setLayout(self.session_tab_layout)
+
         self.tab_container = QTabWidget()
         self.tab_container.addTab(self.wallpaper_tab, "Wallpaper")
         self.tab_container.addTab(self.interface_tab, "Interface")
+        self.tab_container.addTab(self.session_tab, "Session")
 
         self.apply_button = QPushButton("Apply")
         self.apply_button.clicked.connect(self.applybtn_react)
@@ -84,6 +126,14 @@ class MainWindow(QMainWindow):
             config_file["interface_menu"] = "drawer"
         else:
             config_file["interface_menu"] = "menu"
+
+        autostart_strings = []
+        for i in range(self.session_autostart_list.count()):
+            item_text = self.session_autostart_list.item(i).text()
+            autostart_strings.append(item_text)
+
+        config_file["autostart"] = autostart_strings
+        config_file["session_terminal"] = self.session_terminal_app_line.text()
 
         print(config_file)
         config = open(os.path.expanduser("~/.config/zde/config.json"), "w")
@@ -112,6 +162,12 @@ class MainWindow(QMainWindow):
             self.wallpaper_color = color.name()
     def open_panel_config(self):
         subprocess.Popen("nwg-panel-config")
+    def session_autostart_add(self):
+        self.session_autostart_list.addItem(self.session_autostart_newentry_line.text())
+        self.session_autostart_newentry_line.clear()
+    def session_autostart_del(self):
+        for i in self.session_autostart_list.selectedItems():
+            self.session_autostart_list.takeItem(self.session_autostart_list.row(i))
 
 app = QApplication(sys.argv)
 

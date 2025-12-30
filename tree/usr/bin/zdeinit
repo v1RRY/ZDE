@@ -55,4 +55,7 @@ if showwelcome:
     p4 = subprocess.Popen("zwelcome")
     processes.append(p4)
 
+for i in config["autostart"]:
+    processes.append(subprocess.Popen(i, shell=True))
+
 psutil.wait_procs(processes)

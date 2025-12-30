@@ -25,12 +25,16 @@ class MainWindow(QMainWindow):
         self.wallpaper_image_select_widget = QPushButton("Set an image")
         self.wallpaper_image_select_widget.clicked.connect(self.wallpaper_image_select)
 
+        self.wallpaper_image_select_mode_widget = QComboBox()
+        self.wallpaper_image_select_mode_widget.addItems(["stretch", "fill", "fit", "center", "tile"])
+
         self.wallpaper_color_select_widget = QPushButton("Set a color")
         self.wallpaper_color_select_widget.clicked.connect(self.wallpaper_color_select)
 
         self.wallpaper_tab_layout = QVBoxLayout()
         self.wallpaper_tab_layout.addWidget(self.wallpaper_type_widget)
         self.wallpaper_tab_layout.addWidget(self.wallpaper_image_select_widget)
+        self.wallpaper_tab_layout.addWidget(self.wallpaper_image_select_mode_widget)
         self.wallpaper_tab_layout.addWidget(self.wallpaper_color_select_widget)
         self.wallpaper_tab_layout.addStretch(1)
 
@@ -117,7 +121,7 @@ class MainWindow(QMainWindow):
         config_file = {}
         if self.wallpaper_type_widget.currentIndex() == 0:
             config_file["wallpaper_type"] = "image"
-            config_file["wallpaper"] = {"path": self.wallpaper_image, "mode": "stretch"} # щя лень уже добавлять режимы потом добавлю уже
+            config_file["wallpaper"] = {"path": self.wallpaper_image, "mode": self.wallpaper_image_select_mode_widget.currentText()}
         else:
             config_file["wallpaper_type"] = "color"
             config_file["wallpaper"] = self.wallpaper_color.replace("#", "")
